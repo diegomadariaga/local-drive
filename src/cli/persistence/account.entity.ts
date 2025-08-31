@@ -19,6 +19,21 @@ export class AccountEntity {
   @Column({ name: 'credentials_path' })
   credentialsPath!: string;
 
+  @Column({ name: 'access_token_enc', type: 'text', nullable: true })
+  accessTokenEnc!: string | null;
+
+  @Column({ name: 'refresh_token_enc', type: 'text', nullable: true })
+  refreshTokenEnc!: string | null;
+
+  @Column({ name: 'token_type', type: 'text', nullable: true })
+  tokenType!: string | null;
+
+  @Column({ name: 'scope', type: 'text', nullable: true })
+  scope!: string | null;
+
+  @Column({ name: 'expires_at', type: 'integer', nullable: true }) // epoch ms
+  expiresAt!: number | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 
