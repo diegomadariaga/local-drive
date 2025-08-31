@@ -139,3 +139,59 @@ Para añadir un nuevo caso de uso (ej. update):
 3. Añadir endpoint en `presentation/http/files.controller.ts` que invoque el use case.
 4. Registrar el use case como provider en `files.module.ts`.
 
+## CLI Multi-cuenta (Google Drive / OneDrive - Stub)
+
+Se añadió una CLI experimental (fuera de Nest) para gestionar múltiples cuentas de proveedores de nube y sincronizar metadatos de archivos de forma simplificada.
+
+### Arquitectura
+
+```
+src/cli/
+  domain/                  # Enums y estados (provider, sync status)
+  persistence/             # Entidades TypeORM y DataSource único (SQLite)
+    account.entity.ts
+    file-metadata.entity.ts
+    data-source.ts
+  config/                  # Paths y setup de directorios
+  cli.ts                   # Entrada CLI (comandos)
+```
+
+SQLite ubicado por defecto en `./data/app.db` (configurable con `LOCAL_DRIVE_DATA`). Se usa `synchronize: true` para simplificar el desarrollo (no usar en producción).
+
+### Entidades principales
+- `AccountEntity`: alias único, provider (`google`, `onedrive`), externalId (id en la nube), credentialsPath.
+- `FileMetadataEntity`: estado de sincronización (`cloud_only`, `local_only`, `synced`, etc.) y hashes/local/remote timestamps.
+
+### Comandos disponibles
+```
+npm run start:cli -- add-account <alias> <provider> <externalId>
+npm run start:cli -- list-accounts
+npm run start:cli -- list-files <alias>
+npm run start:cli -- sync-pull <alias>
+npm run start:cli -- sync-push <alias>
+```
+
+Ejemplo:
+```
+npm run start:cli -- add-account personal google user123
+npm run start:cli -- sync-pull personal
+npm run start:cli -- list-files personal
+```
+
+`sync-pull` (stub) crea archivos remotos ficticios marcados `cloud_only`.
+`sync-push` (stub) marca archivos `local_only` como `synced` y les asigna un id remoto ficticio.
+
+### Próximos pasos sugeridos
+- Implementar clientes reales OAuth para Google Drive / OneDrive.
+- Calcular hash local (ej. SHA256) y comparar con metadata remota (ETag / hash del proveedor).
+- Manejar conflictos (`modified_local` vs `modified_remote`).
+- Añadir pruebas unitarias para comandos CLI.
+- Migrar de `synchronize: true` a migraciones TypeORM controladas.
+
+### Variables de entorno
+- `LOCAL_DRIVE_DATA`: ruta base para data (por defecto `./data`).
+
+### Notas de seguridad
+Las credenciales por ahora se almacenan en texto plano (`credentials.json` placeholder). Debería reemplazarse por almacenamiento cifrado (ej. Keychain, KMS, o archivo cifrado con libsodium) antes de uso real.
+
+
