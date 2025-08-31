@@ -96,3 +96,46 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Files vertical slice (Clean Architecture / Screaming Architecture)
+
+El módulo `files` está organizado como un vertical slice siguiendo principios de Clean Architecture:
+
+```
+src/files/
+  domain/                # Entidades y contratos (modelos puros)
+    file.entity.ts
+    file.repository.ts
+  application/
+    dto/                 # DTOs de entrada
+      create-file.dto.ts
+    use-cases/           # Casos de uso orquestan lógica
+      create-file.use-case.ts
+      get-file.use-case.ts
+      list-files.use-case.ts
+  infrastructure/
+    repositories/        # Implementaciones concretas (in-memory, luego DB)
+      in-memory-file.repository.ts
+  presentation/
+    http/                # Adaptadores de entrada (controllers REST)
+      files.controller.ts
+  files.module.ts        # Ensambla providers y wiring
+```
+
+Principios aplicados:
+- Dependencias apuntan hacia el dominio (domain no depende de nada externo).
+- Application orquesta casos de uso y depende solo de interfaces del dominio.
+- Infrastructure implementa interfaces (por ejemplo `FileRepository`).
+- Presentation (controller) traduce HTTP a casos de uso y DTOs.
+- `files.module.ts` actúa como el composition root del slice (Screaming: la estructura grita el negocio: "files").
+
+Para agregar persistencia real:
+1. Crear `infrastructure/repositories/prisma-file.repository.ts` (o typeorm) implementando `FileRepository`.
+2. Registrar provider en `files.module.ts` reemplazando `{ provide: FILE_REPOSITORY, useClass: InMemoryFileRepository }`.
+
+Para añadir un nuevo caso de uso (ej. update):
+1. Crear DTO en `application/dto`.
+2. Crear use case en `application/use-cases` que use el repositorio.
+3. Añadir endpoint en `presentation/http/files.controller.ts` que invoque el use case.
+4. Registrar el use case como provider en `files.module.ts`.
+
