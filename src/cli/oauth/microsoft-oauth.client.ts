@@ -10,8 +10,10 @@ export interface MicrosoftTokenResponse {
   refresh_token?: string;
 }
 
-const MS_AUTH_BASE = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize';
-const MS_TOKEN_URL = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+const MS_AUTH_BASE =
+  'https://login.microsoftonline.com/common/oauth2/v2.0/authorize';
+const MS_TOKEN_URL =
+  'https://login.microsoftonline.com/common/oauth2/v2.0/token';
 
 export interface MicrosoftOAuthConfig {
   clientId: string;
@@ -20,7 +22,10 @@ export interface MicrosoftOAuthConfig {
   scope: string; // space separated
 }
 
-export function buildMicrosoftAuthUrl(cfg: MicrosoftOAuthConfig, state: string): string {
+export function buildMicrosoftAuthUrl(
+  cfg: MicrosoftOAuthConfig,
+  state: string,
+): string {
   const p = new URLSearchParams({
     client_id: cfg.clientId,
     response_type: 'code',
@@ -32,7 +37,10 @@ export function buildMicrosoftAuthUrl(cfg: MicrosoftOAuthConfig, state: string):
   return `${MS_AUTH_BASE}?${p.toString()}`;
 }
 
-export async function exchangeMicrosoftCode(cfg: MicrosoftOAuthConfig, code: string): Promise<MicrosoftTokenResponse> {
+export async function exchangeMicrosoftCode(
+  cfg: MicrosoftOAuthConfig,
+  code: string,
+): Promise<MicrosoftTokenResponse> {
   const body = new URLSearchParams({
     client_id: cfg.clientId,
     client_secret: cfg.clientSecret,
@@ -45,7 +53,10 @@ export async function exchangeMicrosoftCode(cfg: MicrosoftOAuthConfig, code: str
   return (await res.json()) as MicrosoftTokenResponse;
 }
 
-export async function refreshMicrosoftToken(cfg: MicrosoftOAuthConfig, refreshToken: string): Promise<MicrosoftTokenResponse> {
+export async function refreshMicrosoftToken(
+  cfg: MicrosoftOAuthConfig,
+  refreshToken: string,
+): Promise<MicrosoftTokenResponse> {
   const body = new URLSearchParams({
     client_id: cfg.clientId,
     client_secret: cfg.clientSecret,

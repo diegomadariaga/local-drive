@@ -37,7 +37,8 @@ export class FilesRepository {
   }
 
   upsert(accountId: number, meta: FileMetadata) {
-    const stmt = this.db(accountId).prepare(`REPLACE INTO files (id, provider_file_id, name, path, mime_type, size, status, hash_local, hash_remote, updated_at_remote, updated_at_local, created_at, account_id)
+    const stmt = this.db(accountId)
+      .prepare(`REPLACE INTO files (id, provider_file_id, name, path, mime_type, size, status, hash_local, hash_remote, updated_at_remote, updated_at_local, created_at, account_id)
       VALUES (@id, @providerFileId, @name, @path, @mimeType, @size, @status, @hashLocal, @hashRemote, @updatedAtRemote, @updatedAtLocal, @createdAt, @accountId)`);
     stmt.run({
       id: meta.id,
@@ -65,7 +66,9 @@ export class FilesRepository {
 
   listByStatus(accountId: number, status: FileSyncStatus): FileMetadata[] {
     return this.db(accountId)
-      .prepare(`SELECT * FROM files WHERE account_id = ? AND status = ? ORDER BY path ASC`)
+      .prepare(
+        `SELECT * FROM files WHERE account_id = ? AND status = ? ORDER BY path ASC`,
+      )
       .all(accountId, status)
       .map((r: any) => this.map(r));
   }

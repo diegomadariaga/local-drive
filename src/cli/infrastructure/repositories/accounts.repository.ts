@@ -25,9 +25,15 @@ function getDb() {
 export class AccountsRepository {
   private db = getDb();
 
-  insert(data: { alias: string; provider: CloudProvider; externalId: string; credentialsPath: string }): Account {
+  insert(data: {
+    alias: string;
+    provider: CloudProvider;
+    externalId: string;
+    credentialsPath: string;
+  }): Account {
     const now = new Date().toISOString();
-    const stmt = this.db.prepare(`INSERT INTO accounts (alias, provider, external_id, credentials_path, created_at, updated_at)
+    const stmt = this.db
+      .prepare(`INSERT INTO accounts (alias, provider, external_id, credentials_path, created_at, updated_at)
       VALUES (@alias, @provider, @externalId, @credentialsPath, @createdAt, @updatedAt)`);
     const info = stmt.run({
       alias: data.alias,
@@ -41,7 +47,9 @@ export class AccountsRepository {
   }
 
   findByAlias(alias: string): Account | null {
-    const row = this.db.prepare(`SELECT * FROM accounts WHERE alias = ?`).get(alias);
+    const row = this.db
+      .prepare(`SELECT * FROM accounts WHERE alias = ?`)
+      .get(alias);
     return row ? this.map(row) : null;
   }
 
@@ -51,7 +59,10 @@ export class AccountsRepository {
   }
 
   list(): Account[] {
-    return this.db.prepare(`SELECT * FROM accounts ORDER BY id ASC`).all().map((r) => this.map(r));
+    return this.db
+      .prepare(`SELECT * FROM accounts ORDER BY id ASC`)
+      .all()
+      .map((r) => this.map(r));
   }
 
   private map(row: any): Account {

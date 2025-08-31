@@ -13,7 +13,8 @@ export interface OAuthTokenSet {
 
 export async function storeTokens(account: AccountEntity, set: OAuthTokenSet) {
   if (set.accessToken) account.accessTokenEnc = encryptPlain(set.accessToken);
-  if (set.refreshToken) account.refreshTokenEnc = encryptPlain(set.refreshToken);
+  if (set.refreshToken)
+    account.refreshTokenEnc = encryptPlain(set.refreshToken);
   if (set.expiresIn) account.expiresAt = Date.now() + set.expiresIn * 1000;
   if (set.tokenType) account.tokenType = set.tokenType;
   if (set.scope) account.scope = set.scope;

@@ -1,7 +1,8 @@
 import { mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 
-export const DATA_ROOT = process.env.LOCAL_DRIVE_DATA || join(process.cwd(), 'data');
+export const DATA_ROOT =
+  process.env.LOCAL_DRIVE_DATA || join(process.cwd(), 'data');
 
 export function ensureDir(path: string) {
   if (!existsSync(path)) mkdirSync(path, { recursive: true });

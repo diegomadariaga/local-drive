@@ -1,4 +1,9 @@
-import { randomBytes, createCipheriv, createDecipheriv, createHash } from 'crypto';
+import {
+  randomBytes,
+  createCipheriv,
+  createDecipheriv,
+  createHash,
+} from 'crypto';
 
 const KEY_ENV = 'LOCAL_DRIVE_KEY';
 
@@ -13,7 +18,10 @@ export function encryptPlain(text: string): string {
   const key = getKey();
   const iv = randomBytes(12); // GCM nonce
   const cipher = createCipheriv('aes-256-gcm', key, iv);
-  const ciphertext = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
+  const ciphertext = Buffer.concat([
+    cipher.update(text, 'utf8'),
+    cipher.final(),
+  ]);
   const tag = cipher.getAuthTag();
   return Buffer.concat([iv, tag, ciphertext]).toString('base64');
 }

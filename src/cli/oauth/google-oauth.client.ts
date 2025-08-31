@@ -19,7 +19,10 @@ export interface GoogleOAuthConfig {
   scope: string;
 }
 
-export function buildGoogleAuthUrl(cfg: GoogleOAuthConfig, state: string): string {
+export function buildGoogleAuthUrl(
+  cfg: GoogleOAuthConfig,
+  state: string,
+): string {
   const p = new URLSearchParams({
     client_id: cfg.clientId,
     redirect_uri: cfg.redirectUri,
@@ -32,7 +35,10 @@ export function buildGoogleAuthUrl(cfg: GoogleOAuthConfig, state: string): strin
   return `${GOOGLE_AUTH_BASE}?${p.toString()}`;
 }
 
-export async function exchangeGoogleCode(cfg: GoogleOAuthConfig, code: string): Promise<GoogleTokenResponse> {
+export async function exchangeGoogleCode(
+  cfg: GoogleOAuthConfig,
+  code: string,
+): Promise<GoogleTokenResponse> {
   const body = new URLSearchParams({
     code,
     client_id: cfg.clientId,
@@ -45,7 +51,10 @@ export async function exchangeGoogleCode(cfg: GoogleOAuthConfig, code: string): 
   return (await res.json()) as GoogleTokenResponse;
 }
 
-export async function refreshGoogleToken(cfg: GoogleOAuthConfig, refreshToken: string): Promise<GoogleTokenResponse> {
+export async function refreshGoogleToken(
+  cfg: GoogleOAuthConfig,
+  refreshToken: string,
+): Promise<GoogleTokenResponse> {
   const body = new URLSearchParams({
     refresh_token: refreshToken,
     client_id: cfg.clientId,

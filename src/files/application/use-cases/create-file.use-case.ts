@@ -11,7 +11,10 @@ export class CreateFileUseCase {
   async execute(dto: CreateFileDto): Promise<FileEntity> {
     const now = new Date();
     const file = new FileEntity(
-      (Math.random().toString(36).slice(2) + Date.now().toString(36)).slice(0, 16),
+      (Math.random().toString(36).slice(2) + Date.now().toString(36)).slice(
+        0,
+        16,
+      ),
       dto.name,
       dto.content,
       now,
