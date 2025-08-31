@@ -188,6 +188,42 @@ npm run start:cli -- list-files personal
 - Añadir pruebas unitarias para comandos CLI.
 - Migrar de `synchronize: true` a migraciones TypeORM controladas.
 
+## OAuth (Google / Microsoft) - CLI
+
+Se añadieron comandos para manejar el flujo OAuth y almacenar tokens cifrados (AES-256-GCM) usando `LOCAL_DRIVE_KEY`.
+
+Variables de entorno requeridas:
+```
+LOCAL_DRIVE_KEY=<clave-secreta> # usada para derivar la llave de cifrado
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GOOGLE_REDIRECT_URI=http://localhost:3000/oauth2/callback/google (ejemplo)
+MICROSOFT_CLIENT_ID=...
+MICROSOFT_CLIENT_SECRET=...
+MICROSOFT_REDIRECT_URI=http://localhost:3000/oauth2/callback/microsoft (ejemplo)
+```
+Scopes por defecto:
+- Google: `https://www.googleapis.com/auth/drive.readonly`
+- Microsoft: `offline_access Files.Read`
+
+Comandos:
+```
+npm run start:cli -- oauth-url <alias>
+npm run start:cli -- oauth-complete <alias> <code>
+npm run start:cli -- refresh-token <alias>
+```
+
+Flujo:
+1. `oauth-url` imprime la URL de autorización. Abrirla en el navegador y aprobar.
+2. El proveedor redirige a tu `redirect_uri` con `?code=...`.
+3. Ejecutar `oauth-complete` con ese code para almacenar tokens (access + refresh) cifrados.
+4. `refresh-token` fuerza la renovación usando el refresh token.
+
+Notas:
+- El access token se renueva manualmente (aún no hay refresh automático en cada operación de sync).
+- `expiresAt` almacena el epoch ms; se podría automatizar refresh si expirado antes de llamadas API reales.
+- No se implementó aún la descarga real de archivos; integrar clientes Drive/Graph es el siguiente paso.
+
 ### Variables de entorno
 - `LOCAL_DRIVE_DATA`: ruta base para data (por defecto `./data`).
 
